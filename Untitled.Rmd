@@ -1,0 +1,142 @@
+---
+title: "Gened Final Paper Data"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+```{r}
+library (dplyr)
+library (ggplot2)
+library (modelsummary)
+library(kableExtra)
+library(broom)
+
+```
+
+```{r}
+library (tidyverse)
+lockdownimpact <- read.csv ("LockdownsImpact.csv")
+
+lockdownimpact <-lockdownimpact |>
+  mutate (governorparty = ifelse (governorparty == 1, "Democrat", "Republican")) |>
+    mutate (lockdown.order = ifelse (lockdown.order == 1, "Yes", "No"), na.rm = TRUE)
+
+lockdownaverage <- lockdownimpact |>
+  group_by (governorparty, lockdown.order) |>
+  summarize (avg_change = median (lockdowndays, na.rm = TRUE)) |>
+  pivot_wider (names_from = governorparty,
+                values_from = avg_change)
+    
+knitr::kable(lockdownaverage)
+
+```
+
+
+```{r}
+average <- lm(average ~ lockdowndays , data = lockdownimpact)
+  
+  results1 <-
+  (average |> 
+       broom::tidy() |> 
+      select(term, est2 = estimate, se2 = std.error, pval2 = p.value)) |>
+  select(term, matches("est"), matches("se"), matches ("pval")) 
+
+
+results1 |>
+  knitr::kable(
+    booktabs = TRUE, digits = 4,
+    col.names = c("Coefficient", "Coef. estimate", "Std. error","P-value"),
+    caption = "Average Regression Table") |>
+    kable_styling(
+    position = "center", 
+    latex_options = "HOLD_position") |>
+  column_spec(1, color = "black", background = "white")
+
+```
+
+```{r}
+coviddeaths <- lm(coviddeathspercapita ~ lockdowndays, data = lockdownimpact)
+  
+  results2 <-
+  (coviddeaths |> 
+       broom::tidy() |> 
+      select(term, est2 = estimate, se2 = std.error, pval2 = p.value)) |>
+  select(term, matches("est"), matches("se"), matches ("pval")) 
+
+
+results2 |>
+  knitr::kable(
+    booktabs = TRUE, digits = 4,
+    col.names = c("Coefficient", "Coef. estimate", "Std. error","P-value"),
+    caption = "Covid Deaths Regression Table") |>
+    kable_styling(
+    position = "center", 
+    latex_options = "HOLD_position") |>
+  column_spec(1, color = "black", background = "white")
+```
+```{r}
+health <- lm(health ~ lockdowndays , data = lockdownimpact)
+  
+  results3 <-
+  (health |> 
+       broom::tidy() |> 
+      select(term, est2 = estimate, se2 = std.error, pval2 = p.value)) |>
+  select(term, matches("est"), matches("se"), matches ("pval")) 
+
+
+results3 |>
+  knitr::kable(
+    booktabs = TRUE, digits = 4,
+    col.names = c("Coefficient", "Coef. estimate", "Std. error","P-value"),
+    caption = "Health Regression Table") |>
+    kable_styling(
+    position = "center", 
+    latex_options = "HOLD_position") |>
+  column_spec(1, color = "black", background = "white")
+```
+
+```{r}
+economy <- lm(economy ~ lockdowndays , data = lockdownimpact)
+  
+  results4 <-
+  (economy |> 
+       broom::tidy() |> 
+      select(term, est2 = estimate, se2 = std.error, pval2 = p.value)) |>
+  select(term, matches("est"), matches("se"), matches ("pval")) 
+
+
+results4 |>
+  knitr::kable(
+    booktabs = TRUE, digits = 4,
+    col.names = c("Coefficient", "Coef. estimate", "Std. error","P-value"),
+    caption = "Economy Regression Table") |>
+    kable_styling(
+    position = "center", 
+    latex_options = "HOLD_position") |>
+  column_spec(1, color = "black", background = "white")
+```
+
+
+```{r}
+social <- lm(social ~ lockdowndays, data = lockdownimpact)
+  
+  results5 <-
+  (social |> 
+       broom::tidy() |> 
+      select(term, est2 = estimate, se2 = std.error, pval2 = p.value)) |>
+  select(term, matches("est"), matches("se"), matches ("pval")) 
+
+
+results5 |>
+  knitr::kable(
+    booktabs = TRUE, digits = 4,
+    col.names = c("Coefficient", "Coef. estimate", "Std. error","P-value"),
+    caption = "Social Regression Table") |>
+    kable_styling(
+    position = "center", 
+    latex_options = "HOLD_position") |>
+  column_spec(1, color = "black", background = "white")
+```
+
